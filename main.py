@@ -5,11 +5,14 @@ from PIL import Image
 
 WINDOW_WIDTH = 600
 WINDOW_HEIGHT = 450
-WINDOW_TITLE = "MAP"
-MAP_FILE = "map.png"
+WINDOW_TITLE = "Часть 2"
 
 
-class GameView(arcade.Window):
+class MapView(arcade.Window):
+    def __init__(self):
+        super().__init__(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE)
+        self.zoom = 12
+
     def setup(self):
         self.get_image()
 
@@ -21,17 +24,25 @@ class GameView(arcade.Window):
             self.rect
         )
 
+    def on_key_press(self, symbol, modifiers):
+        if symbol == arcade.key.PAGEUP and self.zoom <= 24:
+            self.zoom += 1
+            self.get_image()
+        elif symbol == arcade.key.PAGEDOWN and self.zoom >= 0:
+            self.zoom -= 1
+            self.get_image()
+
+
     def get_image(self):
-        im = static_maps(ll='60.109599,55.050432', z=12)
+        im = static_maps(ll='60.109599,55.050432', z=self.zoom)
         imdata = arcade.texture.ImageData(Image.open(im).convert('RGBA'))
         self.background = arcade.Texture(imdata)
 
 
 def main():
-    gameview = GameView(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE)
+    gameview = MapView()
     gameview.setup()
     arcade.run()
-    os.remove(MAP_FILE)
 
 
 if __name__ == "__main__":
