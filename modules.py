@@ -92,5 +92,5 @@ def static_maps(ll=None, **kwargs):
     map_api_server = "https://static-maps.yandex.ru/v1"
     response = requests.get(map_api_server, params=map_params)
     if not response:
-        raise Exception(response.status_code)
+        raise Exception(f"{response.status_code}, {response.text}")
     return BytesIO(response.content)
