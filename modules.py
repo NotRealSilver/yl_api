@@ -80,6 +80,9 @@ def get_geoobject_coord(g):
     coord = tuple(map(float, g['GeoObject']['Point']['pos'].split()))
     return coord
 
+def get_address_geoobject(g):
+    return g['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']
+
 
 def static_maps(ll=None, **kwargs):
     map_params = {

@@ -5,7 +5,7 @@ from modules import *
 from PIL import Image
 
 WINDOW_WIDTH = 600
-WINDOW_HEIGHT = 500
+WINDOW_HEIGHT = 550
 WINDOW_TITLE = "Часть 3"
 KEY_SET = {
     arcade.key.PAGEUP,
@@ -30,7 +30,8 @@ class MapView(arcade.Window):
 
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
-        self.layout = arcade.gui.UIBoxLayout(x=20, y=450, width=500, height=50, vertical=False)
+        self.hor_layout = arcade.gui.UIBoxLayout(vertical=False, space_between=5)
+        self.vert_layout = arcade.gui.UIBoxLayout(x=20, y=470, width=500, height=50, vertical=True, space_between=20, align="left")
 
         self.on_texture = arcade.load_texture(
             ":resources:gui_basic_assets/simple_checkbox/circle_on.png"
@@ -51,17 +52,22 @@ class MapView(arcade.Window):
         clear_btn = arcade.gui.UIFlatButton(text='Очистить', width=75, height=20)
         clear_btn.on_click = self.clear_search
 
-        self.layout.add(toggle_label)
-        self.layout.add(toggle)
-        self.layout.add(search_label)
-        self.layout.add(self.search_field)
-        self.layout.add(search_btn)
-        self.layout.add(clear_btn)
-        self.manager.add(self.layout)
+        self.address_label = arcade.gui.UILabel(text='Адрес', text_color=arcade.color.WHITE, font_size=14)
+
+        self.hor_layout.add(toggle_label)
+        self.hor_layout.add(toggle)
+        self.hor_layout.add(search_label)
+        self.hor_layout.add(self.search_field)
+        self.hor_layout.add(search_btn)
+        self.hor_layout.add(clear_btn)
+        self.vert_layout.add(self.hor_layout)
+        self.vert_layout.add(self.address_label)
+        self.manager.add(self.vert_layout)
         self.get_image()
 
     def clear_search(self, event):
         self.pt = None
+        self.address_label.text = ''
         self.get_image()
 
     def on_search(self, event):
@@ -70,6 +76,8 @@ class MapView(arcade.Window):
             return
         self.lon, self.lat = get_geoobject_coord(geocode(text))
         self.pt = f'{self.lon},{self.lat},flag'
+        address = get_address_geoobject(geocode(text))
+        self.address_label.text = address
         self.get_image()
 
     def change_theme(self, val):
