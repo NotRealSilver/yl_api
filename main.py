@@ -26,7 +26,7 @@ class MapView(arcade.Window):
         self.lon = 60.109599
         self.lat = 55.050432
         self.theme = 'light'
-        self.pt = f'{self.lon},{self.lat},comma'
+        self.pt = None
 
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
@@ -48,12 +48,20 @@ class MapView(arcade.Window):
         search_btn = arcade.gui.UIFlatButton(text='Искать', width=55, height=20)
         search_btn.on_click = self.on_search
 
+        clear_btn = arcade.gui.UIFlatButton(text='Очистить', width=75, height=20)
+        clear_btn.on_click = self.clear_search
+
         self.layout.add(toggle_label)
         self.layout.add(toggle)
         self.layout.add(search_label)
         self.layout.add(self.search_field)
         self.layout.add(search_btn)
+        self.layout.add(clear_btn)
         self.manager.add(self.layout)
+        self.get_image()
+
+    def clear_search(self, event):
+        self.pt = None
         self.get_image()
 
     def on_search(self, event):
