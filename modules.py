@@ -83,6 +83,11 @@ def get_geoobject_coord(g):
 def get_address_geoobject(g):
     return g['GeoObject']['metaDataProperty']['GeocoderMetaData']['text']
 
+def get_address_postal(g):
+    try:
+        return g['GeoObject']['metaDataProperty']['GeocoderMetaData']['Address']['postal_code']
+    except KeyError:
+        return None
 
 def static_maps(ll=None, **kwargs):
     map_params = {

@@ -27,11 +27,13 @@ class MapView(arcade.Window):
         self.lat = 55.050432
         self.theme = 'light'
         self.pt = None
+        self.postal = False
 
         self.manager = arcade.gui.UIManager()
         self.manager.enable()
         self.hor_layout = arcade.gui.UIBoxLayout(vertical=False, space_between=5)
-        self.vert_layout = arcade.gui.UIBoxLayout(x=20, y=470, width=500, height=50, vertical=True, space_between=20, align="left")
+        self.vert_layout = arcade.gui.UIBoxLayout(x=20, y=470, width=500, height=50, vertical=True, space_between=20,
+                                                  align="left")
 
         self.on_texture = arcade.load_texture(
             ":resources:gui_basic_assets/simple_checkbox/circle_on.png"
@@ -52,6 +54,11 @@ class MapView(arcade.Window):
         clear_btn = arcade.gui.UIFlatButton(text='Очистить', width=75, height=20)
         clear_btn.on_click = self.clear_search
 
+        postal_label = arcade.gui.UILabel(text='Показать индекс', text_color=arcade.color.WHITE, font_size=14)
+        postal_toggle = arcade.gui.UITextureToggle(on_texture=self.on_texture, off_texture=self.off_texture, width=20,
+                                                   height=20)
+        postal_toggle.on_change = self.show_postal
+
         self.address_label = arcade.gui.UILabel(text='Адрес', text_color=arcade.color.WHITE, font_size=14)
 
         self.hor_layout.add(toggle_label)
@@ -60,10 +67,15 @@ class MapView(arcade.Window):
         self.hor_layout.add(self.search_field)
         self.hor_layout.add(search_btn)
         self.hor_layout.add(clear_btn)
+        self.hor_layout.add(postal_label)
+        self.hor_layout.add(postal_toggle)
         self.vert_layout.add(self.hor_layout)
         self.vert_layout.add(self.address_label)
         self.manager.add(self.vert_layout)
         self.get_image()
+
+    def show_postal(self, event):
+        self.postal = True if event.new_value else False
 
     def clear_search(self, event):
         self.pt = None
@@ -76,8 +88,9 @@ class MapView(arcade.Window):
             return
         self.lon, self.lat = get_geoobject_coord(geocode(text))
         self.pt = f'{self.lon},{self.lat},flag'
-        address = get_address_geoobject(geocode(text))
-        self.address_label.text = address
+        self.postal_val = get_address_postal(geocode(text))
+        self.address_label.text = f'{get_address_geoobject(geocode(text))}, {self.postal_val}' if self.postal_val and self.postal \
+            else get_address_geoobject(geocode(text))
         self.get_image()
 
     def change_theme(self, val):
