@@ -76,6 +76,9 @@ class MapView(arcade.Window):
 
     def show_postal(self, event):
         self.postal = True if event.new_value else False
+        member = geocode(self.search_field.text)
+        self.address_label.text = f'{get_address_geoobject(member)}, {self.postal_val}' if self.postal_val and self.postal \
+            else get_address_geoobject(member)
 
     def clear_search(self, event):
         self.pt = None
@@ -86,11 +89,12 @@ class MapView(arcade.Window):
         text = self.search_field.text
         if not text:
             return
-        self.lon, self.lat = get_geoobject_coord(geocode(text))
+        member = geocode(text)
+        self.lon, self.lat = get_geoobject_coord(member)
         self.pt = f'{self.lon},{self.lat},flag'
-        self.postal_val = get_address_postal(geocode(text))
-        self.address_label.text = f'{get_address_geoobject(geocode(text))}, {self.postal_val}' if self.postal_val and self.postal \
-            else get_address_geoobject(geocode(text))
+        self.postal_val = get_address_postal(member)
+        self.address_label.text = f'{get_address_geoobject(member)}, {self.postal_val}' if self.postal_val and self.postal \
+            else get_address_geoobject(member)
         self.get_image()
 
     def change_theme(self, val):
